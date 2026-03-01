@@ -1,0 +1,96 @@
+---
+export const prerender = true;
+
+import PageLayout from "@layouts/PageLayout.astro";
+import Container from "@components/layout/Container.astro";
+import Card from "@components/ui/Card.astro";
+import Badge from "@components/ui/Badge.astro";
+import { getCollection } from "astro:content";
+
+const articles = await getCollection("articles");
+const sorted = articles.sort(
+  (a, b) =>
+    new Date(b.data.fecha).getTime() - new Date(a.data.fecha).getTime()
+);
+---
+
+<PageLayout
+  title="Guía Funeraria — Lucerna"
+  description="Artículos informativos sobre trámites funerarios, beneficios previsionales y orientación legal en Chile."
+>
+  <section
+    class="pt-28 pb-14 text-center"
+    style="background: linear-gradient(170deg, var(--color-sage-muted) 0%, var(--color-warm-light) 100%);"
+  >
+    <Container>
+      <span
+        class="inline-block text-xs font-medium tracking-widest uppercase text-sage mb-2"
+      >
+        Guía informativa
+      </span>
+      <h1 class="text-3xl lg:text-4xl font-display text-text-primary mb-2">
+        Todo lo que necesitas saber
+      </h1>
+      <p class="text-text-secondary max-w-lg mx-auto">
+        Artículos claros y prácticos sobre trámites, beneficios y orientación
+        para momentos difíciles.
+      </p>
+    </Container>
+  </section>
+
+  <section class="py-12 lg:py-16">
+    <Container>
+      {
+        sorted.length > 0 ? (
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {sorted.map((article) => (
+              <a href={`/guia/${article.data.slug}/`} class="group block">
+                <Card hover padding="none">
+                  {article.data.imagen && (
+                    <img
+                      src={article.data.imagen}
+                      alt={article.data.title}
+                      class="w-full h-48 object-cover"
+                      loading="lazy"
+                    />
+                  )}
+                  <div class="p-5">
+                    {article.data.categoria && (
+                      <Badge variant="sage" class="mb-2">
+                        {article.data.categoria}
+                      </Badge>
+                    )}
+                    <h2 class="font-medium text-text-primary group-hover:text-sage transition-colors mb-2">
+                      {article.data.title}
+                    </h2>
+                    {article.data.extracto && (
+                      <p class="text-sm text-text-secondary line-clamp-3">
+                        {article.data.extracto}
+                      </p>
+                    )}
+                    <time class="block text-xs text-text-muted mt-3">
+                      {new Date(article.data.fecha).toLocaleDateString(
+                        "es-CL",
+                        {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        }
+                      )}
+                    </time>
+                  </div>
+                </Card>
+              </a>
+            ))}
+          </div>
+        ) : (
+          <div class="text-center py-16">
+            <p class="text-text-muted">
+              Pronto publicaremos artículos informativos. ¡Vuelve pronto!
+            </p>
+          </div>
+        )
+      }
+    </Container>
+  </section>
+</PageLayout>

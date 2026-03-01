@@ -1,0 +1,50 @@
+---
+import Container from "@components/layout/Container.astro";
+
+const stats = [
+  {
+    number: "70%",
+    desc: "de las funerarias no tiene sitio web",
+    source: "Estudio FNE 2023",
+  },
+  {
+    number: "94%",
+    desc: "no publica precios de sus servicios",
+    source: "Estudio FNE 2023",
+  },
+  {
+    number: "15 UF",
+    desc: "de cuota mortuoria que muchos desconocen",
+    source: "Sup. de Pensiones",
+  },
+];
+---
+
+<section class="py-16 lg:py-20 bg-white fade-in">
+  <Container>
+    <div class="max-w-2xl mx-auto text-center mb-12">
+      <span class="inline-block text-xs font-medium tracking-[0.25em] uppercase text-warm mb-2">
+        El problema
+      </span>
+      <h2 class="text-3xl lg:text-4xl font-display text-sage-dark mb-4">
+        Un momento difícil no debería ser también confuso
+      </h2>
+      <p class="text-text-secondary leading-relaxed">
+        En Chile, encontrar información clara sobre servicios funerarios y
+        beneficios disponibles sigue siendo innecesariamente difícil.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-3xl mx-auto">
+      {stats.map((stat) => (
+        <div class="text-center p-6 rounded-2xl bg-cream fade-in">
+          <div class="text-3xl lg:text-4xl font-display text-sage-dark mb-2">
+            {stat.number}
+          </div>
+          <p class="text-sm text-text-secondary mb-2">{stat.desc}</p>
+          <p class="text-xs text-text-muted">{stat.source}</p>
+        </div>
+      ))}
+    </div>
+  </Container>
+</section>

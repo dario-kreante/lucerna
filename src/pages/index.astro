@@ -1,0 +1,44 @@
+---
+export const prerender = true;
+
+import PageLayout from "@layouts/PageLayout.astro";
+import Hero from "@components/landing/Hero.astro";
+import TrustBar from "@components/landing/TrustBar.astro";
+import Problem from "@components/landing/Problem.astro";
+import Tools from "@components/landing/Tools.astro";
+import CuotaScanner from "@components/landing/CuotaScanner.astro";
+import Services from "@components/landing/Services.astro";
+import HowItWorks from "@components/landing/HowItWorks.astro";
+import CTA from "@components/landing/CTA.astro";
+---
+
+<PageLayout
+  title="Lucerna — Servicios Funerarios Transparentes en Chile"
+  description="Luz que te acompaña. Servicios funerarios dignos, transparentes y accesibles. Consulta la cuota mortuoria, compara precios y recibe orientación 24/7."
+>
+  <Hero />
+  <TrustBar />
+  <Problem />
+  <Tools />
+  <CuotaScanner />
+  <Services />
+  <HowItWorks />
+  <CTA />
+</PageLayout>
+
+<script>
+  // Fade-in animation on scroll
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("visible");
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.1 }
+  );
+
+  document.querySelectorAll(".fade-in").forEach((el) => observer.observe(el));
+</script>

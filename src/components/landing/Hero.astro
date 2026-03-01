@@ -1,0 +1,46 @@
+---
+import Container from "@components/layout/Container.astro";
+import Button from "@components/ui/Button.astro";
+---
+
+<section class="relative bg-cream pt-16 pb-20 lg:pt-24 lg:pb-28 overflow-hidden">
+  <!-- Subtle radial glow -->
+  <div
+    class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full opacity-30"
+    style="background: radial-gradient(circle, rgba(196,169,125,0.15) 0%, transparent 70%)"
+    aria-hidden="true"
+  ></div>
+
+  <Container class="relative">
+    <div class="max-w-2xl mx-auto text-center fade-in">
+      <span
+        class="inline-block text-xs font-medium tracking-[0.25em] uppercase text-warm mb-4"
+      >
+        Luz que te acompaña
+      </span>
+
+      <h1 class="text-4xl lg:text-5xl font-display text-sage-dark leading-tight mb-6">
+        Cuando más necesitas claridad,<br class="hidden sm:block" />
+        estamos contigo
+      </h1>
+
+      <p class="text-lg text-text-secondary leading-relaxed mb-8 max-w-xl mx-auto">
+        Herramientas gratuitas de orientación, precios transparentes y
+        acompañamiento humano. Todo desde un solo lugar.
+      </p>
+
+      <div class="flex flex-col items-center gap-3">
+        <Button href="#cuota" variant="primary" size="lg">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          Consultar Cuota Mortuoria
+        </Button>
+        <p class="text-sm text-text-muted">
+          Gratis, privado y en menos de 1 minuto
+        </p>
+      </div>
+    </div>
+  </Container>
+</section>

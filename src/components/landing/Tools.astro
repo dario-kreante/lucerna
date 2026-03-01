@@ -1,0 +1,98 @@
+---
+import Container from "@components/layout/Container.astro";
+import Card from "@components/ui/Card.astro";
+import Badge from "@components/ui/Badge.astro";
+
+const tools = [
+  {
+    featured: true,
+    badge: "Más Usada",
+    icon: `<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>`,
+    title: "Escáner de Cuota Mortuoria",
+    desc: "Verifica si tienes derecho al beneficio de hasta 15 UF (~$570.000). Solo necesitas tu RUT.",
+    href: "#cuota",
+    linkText: "Consultar ahora",
+  },
+  {
+    icon: `<path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>`,
+    title: "Checklist Post-Fallecimiento",
+    desc: "Guía paso a paso con los trámites necesarios, organizados por urgencia y con enlaces directos.",
+    href: "/checklist",
+    linkText: "Ver checklist",
+  },
+  {
+    icon: `<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>`,
+    title: "Orientación Personalizada",
+    desc: "Habla con alguien que entiende. Te orientamos sin compromiso por WhatsApp o teléfono.",
+    href: "https://wa.me/56912345678?text=Hola%2C%20necesito%20orientación%20sobre%20servicios%20funerarios",
+    linkText: "Escribir por WhatsApp",
+    external: true,
+  },
+];
+---
+
+<section class="py-16 lg:py-20 bg-cream" id="herramientas">
+  <Container>
+    <div class="max-w-2xl mx-auto text-center mb-12 fade-in">
+      <span class="inline-block text-xs font-medium tracking-[0.25em] uppercase text-warm mb-2">
+        Herramientas gratuitas
+      </span>
+      <h2 class="text-3xl lg:text-4xl font-display text-sage-dark mb-4">
+        Orientación clara, cuando la necesitas
+      </h2>
+      <p class="text-text-secondary leading-relaxed">
+        Tres herramientas gratuitas para ayudarte a tomar decisiones informadas
+        en un momento difícil.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+      {tools.map((tool) => (
+        <Card
+          hover
+          padding="lg"
+          class:list={[
+            "flex flex-col fade-in",
+            tool.featured && "ring-2 ring-sage/20 relative",
+          ]}
+        >
+          {tool.featured && tool.badge && (
+            <Badge variant="sage" class="absolute -top-3 left-6">
+              {tool.badge}
+            </Badge>
+          )}
+
+          <div class="w-10 h-10 rounded-xl bg-sage-muted flex items-center justify-center mb-4">
+            <svg
+              class="w-5 h-5 text-sage"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              set:html={tool.icon}
+            />
+          </div>
+
+          <h3 class="text-lg font-display text-sage-dark mb-2">{tool.title}</h3>
+          <p class="text-sm text-text-secondary leading-relaxed mb-4 flex-1">
+            {tool.desc}
+          </p>
+
+          <a
+            href={tool.href}
+            class="inline-flex items-center gap-2 text-sm font-medium text-sage hover:text-sage-dark transition-colors"
+            {...(tool.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+          >
+            {tool.linkText}
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="5" y1="12" x2="19" y2="12" />
+              <polyline points="12 5 19 12 12 19" />
+            </svg>
+          </a>
+        </Card>
+      ))}
+    </div>
+  </Container>
+</section>

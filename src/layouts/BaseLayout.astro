@@ -1,0 +1,57 @@
+---
+import "@/styles/global.css";
+
+interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+  canonical?: string;
+  noindex?: boolean;
+}
+
+const {
+  title,
+  description = "Lucerna te acompaña en los momentos más difíciles. Servicios funerarios transparentes, dignos y accesibles en Chile.",
+  image = "/lucerna-logo.svg",
+  canonical,
+  noindex = false,
+} = Astro.props;
+
+const siteTitle = title === "Lucerna" ? title : `${title} | Lucerna`;
+const canonicalURL = canonical || new URL(Astro.url.pathname, Astro.site).href;
+const imageURL = new URL(image, Astro.site).href;
+---
+
+<!doctype html>
+<html lang="es-CL">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/lucerna-icon.svg" />
+
+    <title>{siteTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalURL} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={siteTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={imageURL} />
+    <meta property="og:locale" content="es_CL" />
+    <meta property="og:site_name" content="Lucerna" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={siteTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={imageURL} />
+
+    <slot name="head" />
+  </head>
+  <body class="min-h-screen bg-cream text-text-primary font-body">
+    <slot />
+  </body>
+</html>

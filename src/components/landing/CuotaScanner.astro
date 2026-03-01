@@ -1,0 +1,193 @@
+---
+import Container from "@components/layout/Container.astro";
+---
+
+<section class="py-16 lg:py-20 bg-sage-dark" id="cuota">
+  <Container>
+    <div class="max-w-xl mx-auto fade-in">
+      <div class="bg-white rounded-2xl overflow-hidden shadow-lifted">
+        <!-- Header -->
+        <div class="p-6 lg:p-8 border-b border-border">
+          <h3 class="text-xl font-display text-sage-dark mb-2">
+            Consulta tu Cuota Mortuoria
+          </h3>
+          <p class="text-sm text-text-secondary leading-relaxed">
+            Verifica tu elegibilidad al beneficio de hasta 15 UF que entrega la
+            AFP o el IPS al cotizante o su carga.
+          </p>
+        </div>
+
+        <!-- Body -->
+        <div class="p-6 lg:p-8">
+          <div>
+            <label
+              for="rutInput"
+              class="block text-sm font-medium text-text-primary mb-2"
+            >
+              RUT del cotizante fallecido
+            </label>
+            <div class="flex gap-3">
+              <input
+                type="text"
+                id="rutInput"
+                class="flex-1 px-4 py-3 rounded-lg border border-border bg-cream text-text-primary placeholder:text-text-muted text-sm focus:outline-none focus:ring-2 focus:ring-sage/30 focus:border-sage transition"
+                placeholder="Ej: 12.345.678-5"
+                maxlength="12"
+                autocomplete="off"
+              />
+              <button
+                id="consultarBtn"
+                class="px-6 py-3 bg-sage text-white text-sm font-medium rounded-lg hover:bg-sage-dark transition-colors cursor-pointer shrink-0"
+              >
+                Verificar
+              </button>
+            </div>
+            <p id="rutError" class="text-sm text-error mt-2 hidden"></p>
+          </div>
+
+          <!-- Results (hidden by default) -->
+          <div id="cuotaResults" class="hidden mt-6 p-5 rounded-xl bg-sage-muted/50 border border-sage/10">
+            <h4 class="text-sm font-medium text-sage-dark mb-4">
+              Información del beneficio
+            </h4>
+            <div class="space-y-3">
+              <div class="flex justify-between text-sm">
+                <span class="text-text-muted">RUT consultado</span>
+                <span class="font-medium text-text-primary" id="resultRut">—</span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-text-muted">Beneficio disponible</span>
+                <span class="font-medium text-text-primary">Cuota Mortuoria (hasta 15 UF)</span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-text-muted">Monto estimado</span>
+                <span class="font-medium text-sage-dark" id="resultMonto">—</span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-text-muted">Plazo para solicitar</span>
+                <span class="font-medium text-text-primary">3 meses desde el fallecimiento</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Next steps (hidden by default) -->
+          <div id="nextSteps" class="hidden mt-6">
+            <h4 class="text-sm font-medium text-sage-dark mb-3">
+              Pasos para cobrar el beneficio:
+            </h4>
+            <ol class="space-y-2 text-sm text-text-secondary list-decimal list-inside">
+              <li>Identificar la AFP o IPS del cotizante</li>
+              <li>Reunir documentos (certificado de defunción, cédula del solicitante)</li>
+              <li>Presentar solicitud en la AFP/IPS correspondiente</li>
+              <li>El pago se realiza dentro de los 10 días hábiles</li>
+            </ol>
+            <div class="mt-4">
+              <a
+                href="https://wa.me/56912345678?text=Hola%2C%20necesito%20ayuda%20para%20cobrar%20la%20cuota%20mortuoria"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-2 px-4 py-2 bg-whatsapp text-white text-sm font-medium rounded-lg hover:brightness-110 transition"
+              >
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                </svg>
+                Necesito ayuda con este trámite
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer disclaimer -->
+        <div class="px-6 lg:px-8 py-4 bg-cream-dark/50 border-t border-border">
+          <p class="text-xs text-text-muted leading-relaxed">
+            Esta herramienta valida el formato de tu RUT y te orienta sobre el
+            beneficio. Para confirmar montos exactos y elegibilidad, es necesario
+            consultar directamente con la AFP o IPS correspondiente. Tu
+            información no se almacena.
+          </p>
+        </div>
+      </div>
+    </div>
+  </Container>
+</section>
+
+<script>
+  function formatRut(value: string): string {
+    let clean = value.replace(/[^0-9kK]/g, "");
+    if (clean.length > 1) {
+      const body = clean.slice(0, -1);
+      const dv = clean.slice(-1).toUpperCase();
+      const formatted = body.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+      return `${formatted}-${dv}`;
+    }
+    return clean;
+  }
+
+  function validateRut(rut: string): boolean {
+    const clean = rut.replace(/[.\-]/g, "");
+    if (clean.length < 2) return false;
+
+    const body = clean.slice(0, -1);
+    const dv = clean.slice(-1).toUpperCase();
+
+    let sum = 0;
+    let multiplier = 2;
+    for (let i = body.length - 1; i >= 0; i--) {
+      sum += parseInt(body[i]) * multiplier;
+      multiplier = multiplier === 7 ? 2 : multiplier + 1;
+    }
+
+    const remainder = 11 - (sum % 11);
+    const expectedDv =
+      remainder === 11 ? "0" : remainder === 10 ? "K" : String(remainder);
+
+    return dv === expectedDv;
+  }
+
+  const input = document.getElementById("rutInput") as HTMLInputElement;
+  const btn = document.getElementById("consultarBtn") as HTMLButtonElement;
+  const errorEl = document.getElementById("rutError") as HTMLElement;
+  const resultsEl = document.getElementById("cuotaResults") as HTMLElement;
+  const nextStepsEl = document.getElementById("nextSteps") as HTMLElement;
+  const resultRut = document.getElementById("resultRut") as HTMLElement;
+  const resultMonto = document.getElementById("resultMonto") as HTMLElement;
+
+  input?.addEventListener("input", () => {
+    const formatted = formatRut(input.value);
+    input.value = formatted;
+    errorEl.classList.add("hidden");
+    errorEl.textContent = "";
+  });
+
+  function consultarCuota() {
+    const rut = input.value.trim();
+
+    if (!rut) {
+      errorEl.textContent = "Ingresa un RUT para consultar";
+      errorEl.classList.remove("hidden");
+      return;
+    }
+
+    if (!validateRut(rut)) {
+      errorEl.textContent = "El RUT ingresado no es válido. Verifica e intenta nuevamente.";
+      errorEl.classList.remove("hidden");
+      return;
+    }
+
+    errorEl.classList.add("hidden");
+    resultRut.textContent = rut;
+
+    // Simulated calculation (15 UF * ~$38,000)
+    const ufValue = 38000;
+    const monto = 15 * ufValue;
+    resultMonto.textContent = `~$${monto.toLocaleString("es-CL")} (15 UF)`;
+
+    resultsEl.classList.remove("hidden");
+    nextStepsEl.classList.remove("hidden");
+  }
+
+  btn?.addEventListener("click", consultarCuota);
+  input?.addEventListener("keydown", (e: KeyboardEvent) => {
+    if (e.key === "Enter") consultarCuota();
+  });
+</script>

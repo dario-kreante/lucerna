@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <defs>
+    <radialGradient id="glow-i" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FAF8F5" stop-opacity="1" />
+      <stop offset="40%" stop-color="#C4A97D" stop-opacity="0.4" />
+      <stop offset="100%" stop-color="#3D5C4B" stop-opacity="0" />
+    </radialGradient>
+    <linearGradient id="bg-i" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#3D5C4B" />
+      <stop offset="100%" stop-color="#2E4A3A" />
+    </linearGradient>
+  </defs>
+
+  <rect width="200" height="200" rx="16" fill="url(#bg-i)" />
+
+  <!-- Resplandor cálido -->
+  <circle cx="100" cy="100" r="80" fill="url(#glow-i)" />
+
+  <!-- Estrella de 4 puntas -->
+  <path d="M100,30 Q100,100 170,100 Q100,100 100,170 Q100,100 30,100 Q100,100 100,30 Z" fill="#FAF8F5" />
+
+  <!-- Partículas satélite en warm -->
+  <circle cx="150" cy="50" r="3" fill="#C4A97D" opacity="0.6"/>
+  <circle cx="50" cy="140" r="2" fill="#C4A97D" opacity="0.4"/>
+</svg>

@@ -1,0 +1,94 @@
+---
+import Container from "./Container.astro";
+
+const currentYear = new Date().getFullYear();
+
+const footerLinks = [
+  {
+    title: "Servicios",
+    links: [
+      { href: "/#servicios", label: "Servicios funerarios" },
+      { href: "/#como-funciona", label: "Cómo funciona" },
+      { href: "/checklist", label: "Checklist funerario" },
+    ],
+  },
+  {
+    title: "Recursos",
+    links: [
+      { href: "/guia/", label: "Guía informativa" },
+      { href: "/#herramientas", label: "Herramientas gratuitas" },
+      { href: "/#faq", label: "Preguntas frecuentes" },
+    ],
+  },
+  {
+    title: "Contacto",
+    links: [
+      { href: "https://wa.me/56912345678", label: "WhatsApp", external: true },
+      { href: "mailto:contacto@lucerna.cl", label: "contacto@lucerna.cl" },
+    ],
+  },
+];
+---
+
+<footer class="bg-sage-dark text-cream/80 mt-20">
+  <Container>
+    <div class="py-12 lg:py-16">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+        <!-- Brand -->
+        <div class="sm:col-span-2 lg:col-span-1">
+          <a href="/" class="inline-flex items-center gap-3 mb-4">
+            <img
+              src="/lucerna-icon.svg"
+              alt=""
+              width="32"
+              height="32"
+              class="rounded-lg"
+            />
+            <span class="font-display text-lg text-cream tracking-wide">
+              LUCERNA
+            </span>
+          </a>
+          <p class="text-sm leading-relaxed text-cream/60 max-w-xs">
+            Luz que te acompaña. Servicios funerarios transparentes, dignos y
+            accesibles en Chile.
+          </p>
+        </div>
+
+        <!-- Link groups -->
+        {footerLinks.map((group) => (
+          <div>
+            <h3 class="text-sm font-medium text-cream tracking-wide mb-4">
+              {group.title}
+            </h3>
+            <ul class="space-y-2">
+              {group.links.map((link) => (
+                <li>
+                  <a
+                    href={link.href}
+                    class="text-sm text-cream/60 hover:text-warm transition-colors"
+                    {...(link.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Bottom bar -->
+    <div class="border-t border-cream/10 py-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-cream/40">
+      <p>&copy; {currentYear} Lucerna. Todos los derechos reservados.</p>
+      <div class="flex items-center gap-4">
+        <a href="/privacidad" class="hover:text-cream/60 transition-colors">
+          Privacidad
+        </a>
+        <a href="/terminos" class="hover:text-cream/60 transition-colors">
+          Términos
+        </a>
+      </div>
+    </div>
+  </Container>
+</footer>

@@ -1,0 +1,59 @@
+---
+import Container from "@components/layout/Container.astro";
+---
+
+<section class="py-16 lg:py-20 bg-cream" id="como-funciona">
+  <Container>
+    <div class="text-center mb-12 fade-in">
+      <span
+        class="inline-block text-xs font-medium tracking-widest uppercase text-sage mb-2"
+      >
+        Cómo funciona
+      </span>
+      <h2 class="text-2xl lg:text-3xl font-display text-sage-dark mt-2">
+        Cuatro pasos, sin complicaciones
+      </h2>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+      {
+        [
+          {
+            step: 1,
+            title: "Contáctanos",
+            description:
+              "Por WhatsApp, teléfono o formulario. Estamos disponibles 24/7.",
+          },
+          {
+            step: 2,
+            title: "Te orientamos",
+            description:
+              "Evaluamos tu situación, explicamos opciones y beneficios disponibles.",
+          },
+          {
+            step: 3,
+            title: "Tú decides",
+            description:
+              "Eliges el servicio con precios claros. Sin presión, sin letra chica.",
+          },
+          {
+            step: 4,
+            title: "Nos encargamos",
+            description:
+              "Coordinamos todo: servicios, trámites y cobro de beneficios por ti.",
+          },
+        ].map((item) => (
+          <div class="text-center fade-in">
+            <div class="w-12 h-12 rounded-full bg-sage text-white flex items-center justify-center text-lg font-display mx-auto mb-4">
+              {item.step}
+            </div>
+            <h3 class="font-medium text-text-primary mb-2">{item.title}</h3>
+            <p class="text-sm text-text-secondary leading-relaxed">
+              {item.description}
+            </p>
+          </div>
+        ))
+      }
+    </div>
+  </Container>
+</section>

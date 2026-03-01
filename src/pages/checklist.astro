@@ -1,0 +1,405 @@
+---
+export const prerender = true;
+
+import PageLayout from "@layouts/PageLayout.astro";
+import Container from "@components/layout/Container.astro";
+import Button from "@components/ui/Button.astro";
+
+interface ChecklistItem {
+  title: string;
+  description: string;
+  deadline?: string;
+  where?: string;
+  docs?: string;
+  link?: { label: string; href: string; external?: boolean };
+}
+
+interface Category {
+  urgency: "urgent" | "important" | "normal" | "later";
+  badge: string;
+  title: string;
+  items: ChecklistItem[];
+}
+
+const urgencyStyles: Record<string, string> = {
+  urgent: "bg-error/10 text-error",
+  important: "bg-warning/10 text-warning",
+  normal: "bg-info/10 text-info",
+  later: "bg-text-muted/10 text-text-muted",
+};
+
+const categories: Category[] = [
+  {
+    urgency: "urgent",
+    badge: "Urgente",
+    title: "Primeras 24 horas",
+    items: [
+      {
+        title: "Certificado Médico de Defunción",
+        description:
+          "Lo emite el médico que constata el fallecimiento. Es el primer documento necesario para todos los demás trámites.",
+        deadline: "Inmediato",
+        where: "Hospital / Clínica",
+      },
+      {
+        title: "Inscripción en Registro Civil",
+        description:
+          "Inscribir el fallecimiento y obtener el certificado de defunción oficial. Necesario para todos los trámites posteriores.",
+        deadline: "Dentro de 24 hrs",
+        where: "Registro Civil",
+        docs: "Cert. médico + CI fallecido",
+        link: {
+          label: "Sitio Registro Civil",
+          href: "https://www.registrocivil.cl",
+          external: true,
+        },
+      },
+      {
+        title: "Contratar Servicio Funerario",
+        description:
+          "Elegir funeraria y definir los servicios: velatorio, traslado, capilla, sepultura o cremación.",
+        deadline: "Primeras 24 hrs",
+        where: "Online o presencial",
+        link: {
+          label: "Ver nuestros servicios",
+          href: "/#servicios",
+        },
+      },
+    ],
+  },
+  {
+    urgency: "important",
+    badge: "Importante",
+    title: "Primera semana",
+    items: [
+      {
+        title: "Solicitar Cuota Mortuoria",
+        description:
+          "Beneficio de hasta 15 UF (~$570.000) del sistema de pensiones para quien pagó el funeral. Plazo máximo: 3 meses.",
+        deadline: "Máximo 3 meses",
+        where: "AFP o IPS",
+        docs: "Cert. defunción + factura funeral + CI",
+        link: {
+          label: "Consultar cuota mortuoria",
+          href: "/#cuota",
+        },
+      },
+      {
+        title: "Verificar Seguros de Desgravamen",
+        description:
+          "Si el fallecido tenía deudas (créditos, hipoteca, tarjetas), muchas se extinguen automáticamente con el seguro de desgravamen.",
+        deadline: "1-2 semanas",
+        where: "Bancos / CMF",
+        link: {
+          label: "Consultar en CMF",
+          href: "https://www.conocetuseguros.cl",
+          external: true,
+        },
+      },
+      {
+        title: "Notificar al Empleador",
+        description:
+          "Si el fallecido estaba trabajando, notificar al empleador para liquidar remuneraciones pendientes, finiquito y seguros laborales.",
+        deadline: "Primera semana",
+        where: "Empleador",
+      },
+      {
+        title: "Verificar Seguros de Vida",
+        description:
+          "Revisar si existían pólizas de seguro de vida, accidente o salud con beneficio por fallecimiento.",
+        deadline: "1-2 semanas",
+        where: "Compañías de seguros / CMF",
+        link: {
+          label: "Buscar seguros vigentes",
+          href: "https://www.conocetuseguros.cl",
+          external: true,
+        },
+      },
+    ],
+  },
+  {
+    urgency: "normal",
+    badge: "Primer Mes",
+    title: "Dentro del primer mes",
+    items: [
+      {
+        title: "Solicitar Posesión Efectiva",
+        description:
+          "Trámite ante el Registro Civil (o tribunales si hay testamento) para definir los herederos y distribuir bienes.",
+        deadline: "Primer mes",
+        where: "Registro Civil Online",
+        docs: "Cert. defunción + cert. matrimonio + nacimiento",
+        link: {
+          label: "Trámite online",
+          href: "https://www.registrocivil.cl/principal/servicios-en-linea",
+          external: true,
+        },
+      },
+      {
+        title: "Pensión de Sobrevivencia",
+        description:
+          "Cónyuge, hijos menores o padres pueden tener derecho a pensión mensual del sistema previsional.",
+        deadline: "1-3 meses",
+        where: "AFP o IPS",
+        link: {
+          label: "Info ChileAtiende",
+          href: "https://www.chileatiende.gob.cl/fichas/2689-pension-de-sobrevivencia",
+          external: true,
+        },
+      },
+    ],
+  },
+  {
+    urgency: "later",
+    badge: "Posterior",
+    title: "Trámites posteriores",
+    items: [
+      {
+        title: "Declaración de Impuestos a la Herencia",
+        description:
+          "Si los bienes heredados superan las 600 UTM (~$40 millones), se debe pagar impuesto. Plazo: 2 años.",
+        deadline: "Hasta 2 años",
+        where: "SII",
+        link: {
+          label: "Sitio SII",
+          href: "https://www.sii.cl",
+          external: true,
+        },
+      },
+    ],
+  },
+];
+
+const totalItems = categories.reduce((sum, cat) => sum + cat.items.length, 0);
+---
+
+<PageLayout
+  title="Checklist Post-Fallecimiento — Lucerna"
+  description="Lista completa de trámites después de un fallecimiento en Chile. Organizado por urgencia con plazos y enlaces oficiales. 100% gratis."
+>
+  <!-- Header -->
+  <section
+    class="pt-28 pb-14 text-center"
+    style="background: linear-gradient(170deg, var(--color-sage-muted) 0%, var(--color-warm-light) 100%);"
+  >
+    <Container>
+      <h1 class="text-3xl lg:text-4xl font-display text-text-primary mb-2">
+        Checklist Post-Fallecimiento
+      </h1>
+      <p class="text-text-secondary max-w-lg mx-auto">
+        Todos los trámites organizados por urgencia. Marca los completados y
+        lleva el control.
+      </p>
+    </Container>
+  </section>
+
+  <!-- Progress bar -->
+  <div class="max-w-[720px] mx-auto -mt-6 px-4 relative z-10">
+    <div
+      class="bg-white rounded-2xl p-5 shadow-lifted flex items-center gap-4"
+    >
+      <span
+        class="font-bold text-sage-dark whitespace-nowrap text-sm"
+        id="progressText"
+      >
+        0 de {totalItems}
+      </span>
+      <div class="flex-1 h-2 bg-border rounded-full overflow-hidden">
+        <div
+          class="h-full rounded-full transition-all duration-500"
+          style="width: 0%; background: linear-gradient(90deg, var(--color-sage), var(--color-sage-light));"
+          id="progressFill"
+        >
+        </div>
+      </div>
+      <span
+        class="font-bold text-sage-dark whitespace-nowrap text-sm"
+        id="progressPct"
+      >
+        0%
+      </span>
+    </div>
+  </div>
+
+  <!-- Checklist -->
+  <div class="max-w-[720px] mx-auto py-10 px-4">
+    {
+      categories.map((category) => (
+        <div class="mb-8">
+          <div class="flex items-center gap-3 mb-4">
+            <span
+              class:list={[
+                "px-3 py-0.5 rounded-full text-[0.7rem] font-bold uppercase tracking-wider",
+                urgencyStyles[category.urgency],
+              ]}
+            >
+              {category.badge}
+            </span>
+            <h2 class="text-base font-semibold text-text-primary">
+              {category.title}
+            </h2>
+          </div>
+
+          {category.items.map((item) => (
+            <div class="checklist-item bg-white rounded-2xl p-5 mb-2.5 border border-border cursor-pointer transition-all duration-200 flex gap-4 items-start hover:shadow-soft hover:border-sage-muted">
+              <div class="w-[26px] h-[26px] min-w-[26px] border-2 border-border rounded-lg flex items-center justify-center transition-all duration-200 mt-0.5 checkbox">
+                <svg
+                  class="w-3.5 h-3.5 text-transparent transition-colors duration-200"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              </div>
+              <div class="flex-1">
+                <h3 class="text-base font-semibold text-text-primary mb-0.5 transition-all duration-200 item-title">
+                  {item.title}
+                </h3>
+                <p class="text-[0.9375rem] text-text-secondary leading-relaxed">
+                  {item.description}
+                </p>
+                {(item.deadline || item.where || item.docs) && (
+                  <div class="flex gap-2 mt-2 flex-wrap">
+                    {item.deadline && (
+                      <span class="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-error/[0.08] text-error">
+                        {item.deadline}
+                      </span>
+                    )}
+                    {item.where && (
+                      <span class="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-info/[0.08] text-info">
+                        {item.where}
+                      </span>
+                    )}
+                    {item.docs && (
+                      <span class="text-xs px-2.5 py-0.5 rounded-full font-semibold bg-warm/[0.12] text-warm">
+                        {item.docs}
+                      </span>
+                    )}
+                  </div>
+                )}
+                {item.link && (
+                  <a
+                    href={item.link.href}
+                    class="inline-flex items-center gap-1 text-[0.8125rem] text-sage font-semibold mt-2 hover:text-sage-dark transition-colors"
+                    {...(item.link.external
+                      ? { target: "_blank", rel: "noopener noreferrer" }
+                      : {})}
+                    onclick="event.stopPropagation()"
+                  >
+                    {item.link.label}
+                    <svg
+                      class="w-3.5 h-3.5"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                    >
+                      <line x1="7" y1="17" x2="17" y2="7" />
+                      <polyline points="7 7 17 7 17 17" />
+                    </svg>
+                  </a>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      ))
+    }
+
+    <!-- CTA Box -->
+    <div
+      class="rounded-2xl p-10 text-center text-white mt-10"
+      style="background: linear-gradient(135deg, var(--color-sage) 0%, var(--color-sage-dark) 100%);"
+    >
+      <h3 class="text-xl font-display mb-2">
+        ¿Necesitas ayuda con algún trámite?
+      </h3>
+      <p class="opacity-85 mb-6">
+        Nuestro equipo puede orientarte gratuitamente en cualquier paso del
+        proceso.
+      </p>
+      <Button
+        variant="whatsapp"
+        href="https://wa.me/56900000000?text=Hola%2C+necesito+ayuda+con+trámites+post+fallecimiento"
+        external
+      >
+        <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="currentColor"
+          ><path
+            d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"
+          ></path></svg
+        >
+        Hablar con un asesor
+      </Button>
+    </div>
+  </div>
+</PageLayout>
+
+<style>
+  .checklist-item.done {
+    opacity: 0.45;
+    background: var(--color-cream);
+  }
+  .checklist-item.done .item-title {
+    text-decoration: line-through;
+  }
+  .checklist-item.done .checkbox {
+    background: var(--color-sage);
+    border-color: var(--color-sage);
+  }
+  .checklist-item.done .checkbox svg {
+    color: white;
+  }
+</style>
+
+<script>
+  function toggleItem(item: HTMLElement) {
+    item.classList.toggle("done");
+    updateProgress();
+    saveState();
+  }
+
+  function updateProgress() {
+    const total = document.querySelectorAll(".checklist-item").length;
+    const done = document.querySelectorAll(".checklist-item.done").length;
+    const pct = Math.round((done / total) * 100);
+
+    const textEl = document.getElementById("progressText");
+    const fillEl = document.getElementById("progressFill");
+    const pctEl = document.getElementById("progressPct");
+
+    if (textEl) textEl.textContent = `${done} de ${total}`;
+    if (fillEl) fillEl.style.width = `${pct}%`;
+    if (pctEl) pctEl.textContent = `${pct}%`;
+  }
+
+  function saveState() {
+    const items = document.querySelectorAll(".checklist-item");
+    const state = Array.from(items).map((item) =>
+      item.classList.contains("done")
+    );
+    localStorage.setItem("lucerna_checklist", JSON.stringify(state));
+  }
+
+  function loadState() {
+    const saved = localStorage.getItem("lucerna_checklist");
+    if (saved) {
+      const state: boolean[] = JSON.parse(saved);
+      const items = document.querySelectorAll(".checklist-item");
+      state.forEach((done, i) => {
+        if (done && items[i]) items[i].classList.add("done");
+      });
+      updateProgress();
+    }
+  }
+
+  // Attach click handlers
+  document.querySelectorAll(".checklist-item").forEach((item) => {
+    item.addEventListener("click", () => toggleItem(item as HTMLElement));
+  });
+
+  loadState();
+</script>

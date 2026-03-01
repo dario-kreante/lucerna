@@ -1,0 +1,96 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+import Header from "@components/layout/Header.astro";
+import Footer from "@components/layout/Footer.astro";
+import Container from "@components/layout/Container.astro";
+
+interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+  canonical?: string;
+  publishDate?: string;
+  author?: string;
+  category?: string;
+}
+
+const { title, description, image, canonical, publishDate, author, category } =
+  Astro.props;
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: title,
+  description,
+  image,
+  datePublished: publishDate,
+  author: {
+    "@type": "Organization",
+    name: "Lucerna",
+    url: "https://lucerna.cl",
+  },
+  publisher: {
+    "@type": "Organization",
+    name: "Lucerna",
+    logo: {
+      "@type": "ImageObject",
+      url: "https://lucerna.cl/lucerna-icon.svg",
+    },
+  },
+};
+---
+
+<BaseLayout title={title} description={description} image={image} canonical={canonical}>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </Fragment>
+
+  <Header />
+  <main>
+    <Container class="py-12 lg:py-16">
+      <nav aria-label="Breadcrumb" class="mb-8 text-sm text-text-muted">
+        <ol class="flex items-center gap-2">
+          <li><a href="/" class="hover:text-sage">Inicio</a></li>
+          <li class="text-border">/</li>
+          <li><a href="/guia/" class="hover:text-sage">Guía</a></li>
+          {category && (
+            <>
+              <li class="text-border">/</li>
+              <li class="text-text-secondary">{category}</li>
+            </>
+          )}
+        </ol>
+      </nav>
+
+      <article class="max-w-3xl">
+        <header class="mb-10">
+          <h1 class="text-3xl lg:text-4xl font-display text-sage-dark mb-4">
+            {title}
+          </h1>
+          {description && (
+            <p class="text-lg text-text-secondary leading-relaxed">
+              {description}
+            </p>
+          )}
+          {publishDate && (
+            <time
+              datetime={publishDate}
+              class="block mt-4 text-sm text-text-muted"
+            >
+              {new Date(publishDate).toLocaleDateString("es-CL", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
+            </time>
+          )}
+        </header>
+
+        <div class="prose prose-lucerna max-w-none">
+          <slot />
+        </div>
+      </article>
+    </Container>
+  </main>
+  <Footer />
+</BaseLayout>
