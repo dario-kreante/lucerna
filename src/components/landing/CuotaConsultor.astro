@@ -1,0 +1,559 @@
+---
+import Container from "@components/layout/Container.astro";
+import { SITE } from "@lib/constants";
+
+const whatsappCuota = `https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent("Hola, necesito ayuda para cobrar la cuota mortuoria.")}`;
+const spensionesUrl = "https://www.spensiones.cl/apps/certificados/formConsultaAfiliacion.php";
+---
+
+<section class="py-16 lg:py-20 bg-sage-dark" id="cuota">
+  <Container>
+    <div class="max-w-xl mx-auto fade-in">
+      <div class="bg-white rounded-2xl overflow-hidden shadow-lifted">
+        <!-- Header -->
+        <div class="p-6 lg:p-8 border-b border-border">
+          <h3 class="text-xl font-display text-sage-dark mb-2">
+            Consulta tu Cuota Mortuoria
+          </h3>
+          <p class="text-sm text-text-secondary leading-relaxed">
+            Verifica tu elegibilidad al beneficio de hasta
+            <strong>15 UF (~$570.000)</strong> que entrega la AFP o el IPS al
+            cotizante o su carga.
+          </p>
+        </div>
+
+        <!-- Step 1: RUT Input -->
+        <div id="step-rut" class="p-6 lg:p-8">
+          <div>
+            <label
+              for="rutInput"
+              class="block text-sm font-medium text-text-primary mb-2"
+            >
+              RUT del cotizante fallecido
+            </label>
+            <div class="flex gap-3">
+              <input
+                type="text"
+                id="rutInput"
+                class="flex-1 px-4 py-3 rounded-lg border border-border bg-cream text-text-primary placeholder:text-text-muted text-sm focus:outline-none focus:ring-2 focus:ring-sage/30 focus:border-sage transition"
+                placeholder="Ej: 12.345.678-5"
+                maxlength="12"
+                autocomplete="off"
+              />
+              <button
+                id="verificarBtn"
+                class="px-6 py-3 bg-sage text-white text-sm font-medium rounded-lg hover:bg-sage-dark transition-colors cursor-pointer shrink-0"
+              >
+                Verificar
+              </button>
+            </div>
+            <p id="rutError" class="text-sm text-error mt-2 hidden"></p>
+          </div>
+        </div>
+
+        <!-- Step 2: System Selector (fallback when auto-query can't determine) -->
+        <div id="step-selector" class="hidden p-6 lg:p-8">
+          <div class="mb-1">
+            <p class="text-xs text-text-muted mb-1" id="rutDisplay"></p>
+          </div>
+
+          <!-- Banner: shown when auto-query failed -->
+          <div id="selectorBanner" class="hidden mb-4 p-3 rounded-lg bg-warm/10 border border-warm/20">
+            <p class="text-xs text-text-secondary leading-relaxed">
+              No pudimos verificar automáticamente la afiliación de este RUT.
+              Selecciona el sistema previsional manualmente para continuar.
+            </p>
+          </div>
+
+          <h4 class="text-sm font-medium text-sage-dark mb-1">
+            ¿En qué sistema previsional estaba afiliado/a?
+          </h4>
+          <p class="text-xs text-text-muted mb-4">
+            Si no estás seguro/a, puedes
+            <a href={spensionesUrl} target="_blank" rel="noopener noreferrer" class="text-sage underline hover:text-sage-dark">verificar en spensiones.cl</a>.
+          </p>
+
+          <div class="space-y-2">
+            <!-- AFP section (most common) -->
+            <div>
+              <button id="afpToggleBtn" class="w-full text-left px-4 py-3 rounded-lg border-2 border-sage bg-sage-muted/20 text-sm cursor-pointer font-medium text-sage-dark hover:bg-sage-muted/40 transition">
+                AFP <span class="text-text-muted font-normal">— El caso más común en Chile</span>
+                <span id="afpChevron" class="float-right transition-transform">▸</span>
+              </button>
+              <div id="afpList" class="hidden mt-1.5 pl-1 grid grid-cols-2 gap-1.5">
+                <button data-system="afp:Capital" class="system-btn px-3 py-2.5 rounded-lg border border-border hover:border-sage hover:bg-sage-muted/30 transition text-sm cursor-pointer text-left">AFP Capital</button>
+                <button data-system="afp:Cuprum" class="system-btn px-3 py-2.5 rounded-lg border border-border hover:border-sage hover:bg-sage-muted/30 transition text-sm cursor-pointer text-left">AFP Cuprum</button>
+                <button data-system="afp:Habitat" class="system-btn px-3 py-2.5 rounded-lg border border-border hover:border-sage hover:bg-sage-muted/30 transition text-sm cursor-pointer text-left">AFP Habitat</button>
+                <button data-system="afp:Modelo" class="system-btn px-3 py-2.5 rounded-lg border border-border hover:border-sage hover:bg-sage-muted/30 transition text-sm cursor-pointer text-left">AFP Modelo</button>
+                <button data-system="afp:PlanVital" class="system-btn px-3 py-2.5 rounded-lg border border-border hover:border-sage hover:bg-sage-muted/30 transition text-sm cursor-pointer text-left">AFP PlanVital</button>
+                <button data-system="afp:ProVida" class="system-btn px-3 py-2.5 rounded-lg border border-border hover:border-sage hover:bg-sage-muted/30 transition text-sm cursor-pointer text-left">AFP ProVida</button>
+                <button data-system="afp:Uno" class="system-btn col-span-2 sm:col-span-1 px-3 py-2.5 rounded-lg border border-border hover:border-sage hover:bg-sage-muted/30 transition text-sm cursor-pointer text-left">AFP Uno</button>
+              </div>
+            </div>
+
+            <!-- IPS / PGU -->
+            <button data-system="pgu" class="system-btn w-full text-left px-4 py-3 rounded-lg border border-border hover:border-sage hover:bg-sage-muted/30 transition text-sm cursor-pointer">
+              <strong>IPS / Pensión Garantizada</strong> <span class="text-text-muted">— Ex INP, PGU, PBS</span>
+            </button>
+
+            <!-- Renta Vitalicia -->
+            <button data-system="renta-vitalicia" class="system-btn w-full text-left px-4 py-3 rounded-lg border border-border hover:border-sage hover:bg-sage-muted/30 transition text-sm cursor-pointer">
+              <strong>Renta Vitalicia</strong> <span class="text-text-muted">— Jubilado/a con compañía de seguros</span>
+            </button>
+
+            <!-- FFAA -->
+            <button data-system="ffaa" class="system-btn w-full text-left px-4 py-3 rounded-lg border border-border hover:border-sage hover:bg-sage-muted/30 transition text-sm cursor-pointer">
+              <strong>Fuerzas Armadas</strong> <span class="text-text-muted">— Capredena (Ejército, Armada, FACH)</span>
+            </button>
+
+            <!-- Carabineros -->
+            <button data-system="carabineros" class="system-btn w-full text-left px-4 py-3 rounded-lg border border-border hover:border-sage hover:bg-sage-muted/30 transition text-sm cursor-pointer">
+              <strong>Carabineros / PDI</strong> <span class="text-text-muted">— Dipreca</span>
+            </button>
+
+            <!-- No sé -->
+            <button id="helpBtn" class="w-full text-left px-4 py-3 rounded-lg border border-dashed border-border hover:border-sage hover:bg-sage-muted/30 transition text-sm cursor-pointer text-text-muted">
+              No estoy seguro/a — Necesito orientación
+            </button>
+          </div>
+        </div>
+
+        <!-- Step 3: Loading -->
+        <div id="step-loading" class="hidden p-6 lg:p-8">
+          <div class="text-center py-8">
+            <div class="inline-flex items-center gap-3 text-sage-dark">
+              <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              <span class="text-sm font-medium" id="loadingText">Verificando afiliación...</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4a: Guide Result (verified data) -->
+        <div id="step-results" class="hidden p-6 lg:p-8">
+          <div id="resultSuccess">
+            <div class="flex items-center gap-2 mb-4">
+              <svg class="w-5 h-5 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              <h4 class="text-sm font-medium text-sage-dark" id="resultTitle">Resultado</h4>
+            </div>
+
+            <!-- Benefit info card -->
+            <div class="space-y-3 p-4 rounded-xl bg-sage-muted/50 border border-sage/10">
+              <div class="flex justify-between text-sm">
+                <span class="text-text-muted">RUT consultado</span>
+                <span class="font-medium text-text-primary" id="resultRut">—</span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-text-muted">Beneficio disponible</span>
+                <span class="font-medium text-text-primary" id="resultBenefit">—</span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-text-muted">Monto estimado</span>
+                <span class="font-medium text-sage-dark" id="resultAmount">—</span>
+              </div>
+              <div class="flex justify-between text-sm">
+                <span class="text-text-muted">Plazo para solicitar</span>
+                <span class="font-medium text-text-primary" id="resultDeadline">—</span>
+              </div>
+            </div>
+
+            <!-- Where to claim -->
+            <div class="mt-4">
+              <h5 class="text-sm font-medium text-sage-dark mb-2">
+                Pasos para cobrar el beneficio:
+              </h5>
+              <ol id="resultSteps" class="space-y-1.5 text-sm text-text-secondary list-decimal list-inside"></ol>
+            </div>
+
+            <!-- Documents -->
+            <div class="mt-4">
+              <h5 class="text-sm font-medium text-sage-dark mb-2">Documentos necesarios:</h5>
+              <ul id="resultDocs" class="space-y-1 text-sm text-text-secondary list-disc list-inside"></ul>
+            </div>
+
+            <!-- Action buttons -->
+            <div class="mt-5 flex flex-col sm:flex-row gap-3">
+              <a
+                id="resultTramiteLink"
+                href="#"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-sage text-white text-sm font-medium rounded-lg hover:bg-sage-dark transition-colors"
+              >
+                Ir al trámite en línea
+              </a>
+              <a
+                href={whatsappCuota}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-whatsapp text-white text-sm font-medium rounded-lg hover:brightness-110 transition"
+              >
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"></path>
+                </svg>
+                Necesito ayuda con este trámite
+              </a>
+            </div>
+          </div>
+
+          <!-- Reset -->
+          <div class="mt-5 pt-4 border-t border-border">
+            <button
+              id="resetBtn"
+              class="text-sm text-text-muted hover:text-sage-dark transition cursor-pointer"
+            >
+              &larr; Hacer otra consulta
+            </button>
+          </div>
+        </div>
+
+        <!-- Step 4b: Orientation (when we can't verify — NO fake data) -->
+        <div id="step-orientation" class="hidden p-6 lg:p-8">
+          <div class="flex items-center gap-2 mb-4">
+            <svg class="w-5 h-5 text-warm" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <h4 class="text-sm font-medium text-sage-dark">No pudimos verificar la afiliación</h4>
+          </div>
+
+          <div class="p-4 rounded-xl bg-warm/5 border border-warm/15">
+            <p class="text-sm text-text-secondary leading-relaxed mb-3">
+              No encontramos información de afiliación para el RUT
+              <strong id="orientationRut" class="text-text-primary"></strong>.
+              Esto puede ocurrir si el cotizante pertenecía a un sistema que no podemos consultar automáticamente.
+            </p>
+            <p class="text-sm text-text-secondary leading-relaxed">
+              Para obtener información verificada, te recomendamos:
+            </p>
+          </div>
+
+          <div class="mt-4 space-y-3">
+            <div class="flex gap-3 items-start">
+              <span class="flex-shrink-0 w-6 h-6 rounded-full bg-sage/10 text-sage text-xs font-medium flex items-center justify-center mt-0.5">1</span>
+              <div>
+                <p class="text-sm text-text-primary font-medium">Consultar en spensiones.cl</p>
+                <p class="text-xs text-text-muted mt-0.5">
+                  El sitio oficial de la Superintendencia de Pensiones permite verificar la AFP del cotizante.
+                </p>
+                <a
+                  href={spensionesUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="inline-block mt-1.5 text-xs text-sage underline hover:text-sage-dark"
+                >
+                  Ir a spensiones.cl &rarr;
+                </a>
+              </div>
+            </div>
+
+            <div class="flex gap-3 items-start">
+              <span class="flex-shrink-0 w-6 h-6 rounded-full bg-sage/10 text-sage text-xs font-medium flex items-center justify-center mt-0.5">2</span>
+              <div>
+                <p class="text-sm text-text-primary font-medium">Llamar a ChileAtiende</p>
+                <p class="text-xs text-text-muted mt-0.5">
+                  En el <strong>101</strong> pueden orientarte sobre la institución previsional y el trámite de cuota mortuoria.
+                </p>
+              </div>
+            </div>
+
+            <div class="flex gap-3 items-start">
+              <span class="flex-shrink-0 w-6 h-6 rounded-full bg-sage/10 text-sage text-xs font-medium flex items-center justify-center mt-0.5">3</span>
+              <div>
+                <p class="text-sm text-text-primary font-medium">Seleccionar manualmente</p>
+                <p class="text-xs text-text-muted mt-0.5">
+                  Si ya sabes la institución, puedes volver atrás y seleccionarla para obtener la guía de cobro.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action buttons -->
+          <div class="mt-5 flex flex-col sm:flex-row gap-3">
+            <button
+              id="backToSelectorBtn"
+              class="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-sage text-white text-sm font-medium rounded-lg hover:bg-sage-dark transition-colors cursor-pointer"
+            >
+              &larr; Seleccionar institución
+            </button>
+            <a
+              href={whatsappCuota}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-whatsapp text-white text-sm font-medium rounded-lg hover:brightness-110 transition"
+            >
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"></path>
+              </svg>
+              Necesito ayuda
+            </a>
+          </div>
+
+          <!-- Reset -->
+          <div class="mt-5 pt-4 border-t border-border">
+            <button
+              id="resetBtn2"
+              class="text-sm text-text-muted hover:text-sage-dark transition cursor-pointer"
+            >
+              &larr; Hacer otra consulta
+            </button>
+          </div>
+        </div>
+
+        <!-- Footer disclaimer -->
+        <div class="px-6 lg:px-8 py-4 bg-cream-dark/50 border-t border-border">
+          <p class="text-xs text-text-muted leading-relaxed">
+            Esta herramienta consulta directamente la Superintendencia de Pensiones
+            para verificar la afiliación. Para confirmar montos exactos y elegibilidad,
+            consulta con la institución correspondiente. Tu información no se almacena.
+          </p>
+        </div>
+      </div>
+    </div>
+  </Container>
+</section>
+
+<script>
+  function formatRut(value: string): string {
+    let clean = value.replace(/[^0-9kK]/g, "");
+    if (clean.length > 1) {
+      const body = clean.slice(0, -1);
+      const dv = clean.slice(-1).toUpperCase();
+      const formatted = body.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+      return `${formatted}-${dv}`;
+    }
+    return clean;
+  }
+
+  function validateRut(rut: string): boolean {
+    const clean = rut.replace(/[.\-]/g, "");
+    if (clean.length < 2) return false;
+    const body = clean.slice(0, -1);
+    const dv = clean.slice(-1).toUpperCase();
+    let sum = 0;
+    let multiplier = 2;
+    for (let i = body.length - 1; i >= 0; i--) {
+      sum += parseInt(body[i]) * multiplier;
+      multiplier = multiplier === 7 ? 2 : multiplier + 1;
+    }
+    const remainder = 11 - (sum % 11);
+    const expected = remainder === 11 ? "0" : remainder === 10 ? "K" : String(remainder);
+    return dv === expected;
+  }
+
+  // DOM refs
+  const input = document.getElementById("rutInput") as HTMLInputElement;
+  const verificarBtn = document.getElementById("verificarBtn") as HTMLButtonElement;
+  const errorEl = document.getElementById("rutError") as HTMLElement;
+  const rutDisplay = document.getElementById("rutDisplay") as HTMLElement;
+  const loadingText = document.getElementById("loadingText") as HTMLElement;
+  const selectorBanner = document.getElementById("selectorBanner") as HTMLElement;
+
+  const stepRut = document.getElementById("step-rut") as HTMLElement;
+  const stepSelector = document.getElementById("step-selector") as HTMLElement;
+  const stepLoading = document.getElementById("step-loading") as HTMLElement;
+  const stepResults = document.getElementById("step-results") as HTMLElement;
+  const stepOrientation = document.getElementById("step-orientation") as HTMLElement;
+
+  const resultTitle = document.getElementById("resultTitle") as HTMLElement;
+  const resultRut = document.getElementById("resultRut") as HTMLElement;
+  const resultBenefit = document.getElementById("resultBenefit") as HTMLElement;
+  const resultAmount = document.getElementById("resultAmount") as HTMLElement;
+  const resultDeadline = document.getElementById("resultDeadline") as HTMLElement;
+  const resultDocs = document.getElementById("resultDocs") as HTMLElement;
+  const resultSteps = document.getElementById("resultSteps") as HTMLElement;
+  const resultTramiteLink = document.getElementById("resultTramiteLink") as HTMLAnchorElement;
+  const orientationRut = document.getElementById("orientationRut") as HTMLElement;
+
+  let currentRut = "";
+
+  // RUT formatting
+  input?.addEventListener("input", () => {
+    input.value = formatRut(input.value);
+    errorEl.classList.add("hidden");
+  });
+
+  // Show/hide steps
+  function showStep(step: "rut" | "selector" | "loading" | "results" | "orientation") {
+    stepRut.classList.toggle("hidden", step !== "rut");
+    stepSelector.classList.toggle("hidden", step !== "selector");
+    stepLoading.classList.toggle("hidden", step !== "loading");
+    stepResults.classList.toggle("hidden", step !== "results");
+    stepOrientation.classList.toggle("hidden", step !== "orientation");
+  }
+
+  // Step 1: Validate RUT → automatic API query
+  async function handleVerificar() {
+    const rut = input.value.trim();
+    if (!rut) {
+      errorEl.textContent = "Ingresa un RUT para consultar";
+      errorEl.classList.remove("hidden");
+      return;
+    }
+    if (!validateRut(rut)) {
+      errorEl.textContent = "El RUT ingresado no es válido. Verifica e intenta nuevamente.";
+      errorEl.classList.remove("hidden");
+      return;
+    }
+    currentRut = rut;
+    rutDisplay.textContent = `RUT: ${rut}`;
+
+    // Automatic query — try to determine affiliation
+    loadingText.textContent = "Verificando afiliación...";
+    showStep("loading");
+
+    try {
+      const res = await fetch("/api/consulta-cuota", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ rut: currentRut }),
+      });
+
+      const json = await res.json();
+
+      if (!res.ok || !json.ok) {
+        // API error → show selector as fallback
+        selectorBanner.classList.remove("hidden");
+        showStep("selector");
+        return;
+      }
+
+      if (json.needsMoreInfo) {
+        // Could not determine automatically → show selector as fallback
+        selectorBanner.classList.remove("hidden");
+        showStep("selector");
+        return;
+      }
+
+      // Verified! Show guide directly
+      renderGuide(json.data);
+    } catch {
+      // Network error → show selector as fallback
+      selectorBanner.classList.remove("hidden");
+      showStep("selector");
+    }
+  }
+
+  verificarBtn?.addEventListener("click", handleVerificar);
+  input?.addEventListener("keydown", (e: KeyboardEvent) => {
+    if (e.key === "Enter") handleVerificar();
+  });
+
+  // AFP toggle
+  document.getElementById("afpToggleBtn")?.addEventListener("click", () => {
+    const list = document.getElementById("afpList");
+    const chevron = document.getElementById("afpChevron");
+    list?.classList.toggle("hidden");
+    if (chevron) chevron.textContent = list?.classList.contains("hidden") ? "▸" : "▾";
+  });
+
+  // Step 2: Select system → fetch guide (manual selection)
+  document.querySelectorAll(".system-btn").forEach((el) => {
+    el.addEventListener("click", async () => {
+      const selection = (el as HTMLElement).dataset.system;
+      if (!selection) return;
+
+      loadingText.textContent = "Preparando tu guía personalizada...";
+      showStep("loading");
+
+      try {
+        const res = await fetch("/api/consulta-cuota", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ rut: currentRut, manualSelection: selection }),
+        });
+
+        const json = await res.json();
+
+        if (!res.ok || !json.ok) {
+          errorEl.textContent = json.error || "Error al procesar la consulta.";
+          errorEl.classList.remove("hidden");
+          showStep("rut");
+          return;
+        }
+
+        // needsMoreInfo should not happen for specific manual selections,
+        // but handle it just in case
+        if (json.needsMoreInfo) {
+          showOrientation();
+          return;
+        }
+
+        renderGuide(json.data);
+      } catch {
+        errorEl.textContent = "No pudimos conectar con el servicio. Intenta nuevamente.";
+        errorEl.classList.remove("hidden");
+        showStep("rut");
+      }
+    });
+  });
+
+  // "No estoy seguro/a" button → show orientation (no fake data)
+  document.getElementById("helpBtn")?.addEventListener("click", () => {
+    showOrientation();
+  });
+
+  // Render verified guide
+  function renderGuide(data: any) {
+    const { guide, system } = data;
+
+    let title = "Guía para cobrar tu cuota mortuoria";
+    if (system.type === "afp") title = `Afiliado/a a ${guide.institutionName}`;
+    else if (system.type === "pgu") title = "Beneficiario/a IPS — Pensión Garantizada";
+    else if (system.type === "renta-vitalicia") title = "Renta Vitalicia — Compañía de Seguros";
+    else if (system.type === "ffaa") title = "Fuerzas Armadas — Capredena";
+    else if (system.type === "carabineros") title = "Carabineros / PDI — Dipreca";
+
+    resultTitle.textContent = title;
+    resultRut.textContent = currentRut;
+    resultBenefit.textContent = `${guide.benefitName} (${guide.amount.split("(")[0].trim()})`;
+    resultAmount.textContent = guide.amount;
+    resultDeadline.textContent = guide.deadline;
+
+    resultSteps.innerHTML = "";
+    for (const step of guide.steps) {
+      const li = document.createElement("li");
+      li.textContent = step;
+      resultSteps.appendChild(li);
+    }
+
+    resultDocs.innerHTML = "";
+    for (const doc of guide.documents) {
+      const li = document.createElement("li");
+      li.textContent = doc;
+      resultDocs.appendChild(li);
+    }
+
+    resultTramiteLink.href = guide.tramiteUrl;
+
+    showStep("results");
+  }
+
+  // Show orientation step (no fake data — just helpful links)
+  function showOrientation() {
+    orientationRut.textContent = currentRut;
+    showStep("orientation");
+  }
+
+  // "Back to selector" from orientation
+  document.getElementById("backToSelectorBtn")?.addEventListener("click", () => {
+    selectorBanner.classList.add("hidden");
+    showStep("selector");
+  });
+
+  // Reset buttons
+  function handleReset() {
+    showStep("rut");
+    selectorBanner.classList.add("hidden");
+    // Collapse AFP list if open
+    document.getElementById("afpList")?.classList.add("hidden");
+    const chevron = document.getElementById("afpChevron");
+    if (chevron) chevron.textContent = "▸";
+  }
+
+  document.getElementById("resetBtn")?.addEventListener("click", handleReset);
+  document.getElementById("resetBtn2")?.addEventListener("click", handleReset);
+</script>

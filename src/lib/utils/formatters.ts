@@ -21,6 +21,11 @@ export function formatDate(
   });
 }
 
+/** Strip dots, dashes and whitespace from a RUT. Returns only digits + optional K. */
+export function cleanRut(rut: string): string {
+  return rut.trim().replace(/[^0-9kK]/g, "").replace(/k/g, "K");
+}
+
 /** Format a Chilean RUT (e.g., "12345678-9" → "12.345.678-9"). */
 export function formatRut(rut: string): string {
   const clean = rut.replace(/[^0-9kK]/g, "");
