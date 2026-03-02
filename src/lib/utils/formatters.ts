@@ -36,6 +36,11 @@ export function formatRut(rut: string): string {
   return `${formatted}-${dv}`;
 }
 
+/** Strip dots, dashes and whitespace from a RUT. Returns only digits + optional K. */
+export function cleanRut(rut: string): string {
+  return rut.trim().replace(/[^0-9kK]/g, "").replace(/k/g, "K");
+}
+
 /** Validate a Chilean RUT using modulo-11 algorithm. */
 export function validateRut(rut: string): boolean {
   const clean = rut.replace(/[^0-9kK]/g, "");

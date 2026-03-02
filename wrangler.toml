@@ -2,3 +2,10 @@ name = "lucerna"
 compatibility_date = "2025-03-01"
 compatibility_flags = ["nodejs_compat"]
 pages_build_output_dir = "./dist"
+
+[browser]
+binding = "MYBROWSER"
+
+# Dev vars — override in production via Cloudflare dashboard secrets
+[vars]
+SPENSIONES_STRATEGY = "playwright"

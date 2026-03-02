@@ -14,5 +14,12 @@ export default defineConfig({
     ssr: {
       external: ["playwright"],
     },
+    build: {
+      rollupOptions: {
+        // @cloudflare/puppeteer is provided by the Workers runtime — do not bundle it.
+        // playwright is dev-only and should never be included in production builds.
+        external: ["@cloudflare/puppeteer", "playwright"],
+      },
+    },
   },
 });
